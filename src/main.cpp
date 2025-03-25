@@ -128,12 +128,12 @@ void OnDataRecv(const uint8_t *mac_addr, const uint8_t *recv_data, int data_len)
       dummy[1]=recv_data[i*4 + 1 + offset];
       dummy[2]=recv_data[i*4 + 2 + offset];
       dummy[3]=recv_data[i*4 + 3 + offset];
-      if (i<((data_len-offset)/4)-1){
+      if (i<((data_len-offset)/4)){
         USBSerial.printf("%9.4f ", a);
         //USBSerial.printf("%02d ", i);
       }
       else {
-        USBSerial.printf("%2d %2d %4d", dummy[0], dummy[1], dummy[2]+256*dummy[3]);
+        //USBSerial.printf("%2d %2d %4d", dummy[0], dummy[1], dummy[2]+256*dummy[3]);
       }
     }
     USBSerial.printf("\r\n");
@@ -482,6 +482,7 @@ void loop() {
   uint16_t _phi;// = getAileron();
   uint16_t _theta;// = getElevator();
   uint16_t _psi;// = getRudder();
+  static uint8_t loop_counter = 0;
 
 
   while(Loop_flag==0);
@@ -489,6 +490,7 @@ void loop() {
   etime = stime;
   stime = micros();
   dtime = stime - etime;  
+  loop_counter++;
   M5.update();
   joy_update();
 
@@ -641,7 +643,9 @@ void loop() {
       else if ( Mode == RATECONTROL ) M5.Lcd.printf("-ACRO-     ");
       break;
     case 6:
-      M5.Lcd.printf("Time:%7.2f",Timer);
+      //M5.Lcd.printf("Time:%7.2f",Timer);
+      M5.Lcd.printf("Freq:%4d  [%3d] ",1000000/dtime, loop_counter);
+
       break;
     case 7:
       break;
